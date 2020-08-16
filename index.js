@@ -24,6 +24,10 @@ const gameWord = () =>{
     return wordPlayed;
 }
 
+//setting the word to play with from word bank and initializing the "health" of the player
+const currentWord = gameWord();
+var health = 5;
+
 
 inquirer.prompt([{
         type: 'list',
@@ -31,8 +35,7 @@ inquirer.prompt([{
         choices:['yes','no'],
         name: 'ans'
     }]).then(r =>{
-        if(r === 'yes'){
-            let currentWord = gameWord();
+        if(r.ans === 'yes'){
             promptMachine(currentWord);
         }
         else{
@@ -40,7 +43,42 @@ inquirer.prompt([{
         }
 }).catch(err => {console.log(err)});
 
-const promptMachine = ()
+const promptMachine = (w) =>{
+    console.log(w.word + '');
+    if(health > 0){
+        inquirer.prompt([{
+            type: 'input',
+            message: 'Enter your guess:',
+            name: 'ans'
+        }]).then(r =>{
+            letterInspector(w,r);
+        }).catch(err => {console.log(err)});
+    }
+    else{
+        return console.log('You Lose!!');
+    }
+}
+
+const letterInspector = (w,r) =>{
+    let char = r.ans;
+    let inspector = w.guessLetter(char);
+
+    if(inspector){
+        console.log('Correct!');
+    }
+    else{
+        health--;
+        console.log('Incorrect!');
+    }
+
+    let inspectorGeneral = w.guessedCorrectly();
+    if(inspectorGeneral){
+        return console.log('You Win!')
+    }
+    else{
+        promptMachine(w);
+    }
+}
 
 
 
